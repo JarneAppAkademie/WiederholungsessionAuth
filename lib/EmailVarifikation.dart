@@ -20,6 +20,7 @@ class _EmailVerifikationState extends State<EmailVerifikationPage> {
   void initState() {
     
     isEmailVarified = FirebaseAuth.instance.currentUser!.emailVerified;
+    
 
     if(!isEmailVarified){
       //we send the mail one time at the beginning

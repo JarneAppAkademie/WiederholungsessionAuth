@@ -1,3 +1,4 @@
+import 'package:firebasetest/RewiewPage.dart';
 import 'package:flutter/material.dart';
 
 //Imports for authentication, remember that you need them in your dependencies
@@ -39,8 +40,9 @@ class MyApp extends StatelessWidget {
         '/passwordForgottenPage':(context) => PasswordForgottenPage(),
         '/varifikationPage':(context) => EmailVerifikationPage(),
         '/loggedInPage' :(context) => LoggedInPage(),
+        '/rewiewPage':(context) => RewiewPage(),
       },
-      initialRoute: '/',
+      initialRoute: '/loggedInPage',
     );
   }
 }
@@ -60,6 +62,7 @@ class __FirebaseTestState extends State<_FirebaseTest>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Authentikation Wiederholung")),
+      
       body: LoginWidget(),
     );
   }
