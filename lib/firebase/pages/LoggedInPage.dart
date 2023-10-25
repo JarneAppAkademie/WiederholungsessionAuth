@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebasetest/RestaurantTile.dart';
-import 'package:firebasetest/models/Restaurant.dart';
+import 'package:firebasetest/firebase/widgets/RestaurantTile.dart';
+import 'package:firebasetest/firebase/models/Restaurant.dart';
 import 'package:flutter/material.dart';
 
 class LoggedInPage extends StatefulWidget {
@@ -14,40 +14,25 @@ class LoggedInPage extends StatefulWidget {
 
 class _LoggedInPageState extends State<LoggedInPage> {
 
-  Future<List<Restaurant>> fetchRestaurantsFirebase() async{
-    try{
-      QuerySnapshot restaurantCollection = await FirebaseFirestore.instance.collection("Restaurants").get();
-
-      List<Map<String,dynamic>> restaurantsJson = restaurantCollection.docs
-      .map((doc) => doc.data() as Map<String,dynamic>).toList();
-
-      List<Restaurant> restaurants = restaurantsJson
-      .map((json) => Restaurant.fromJson(json)).toList();
-
-      return restaurants;
-
-
-    }catch(error){
-      debugPrint(error.toString());
-      return [];
-    }
-  }
-
-
 
   Future<List<Restaurant>> fetchResterauntsFromFirebase() async {
     try {
       QuerySnapshot restaurantCollection =
           await FirebaseFirestore.instance.collection("Restaurants").get();
 
-      List<Map<String, dynamic>> restaurantsRaw = restaurantCollection.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
-      print(restaurantsRaw.toString());
 
-      List<Restaurant> restaurants =
-          restaurantsRaw.map((val) => Restaurant.fromJson(val)).toList();
-      print(restaurants);
+
+      List<Restaurant> restaurants = restaurantCollection.docs
+          .map((doc) {
+            //debugPrint("RestaurantId: " + doc.id);
+           return Restaurant.fromJson(
+            (doc.data() as Map<String, dynamic>),doc.id
+            );
+          }).toList(); 
+          
+      print(restaurants.toString());
+
+      
 
       return restaurants;
     } catch (e) {
@@ -65,7 +50,7 @@ class _LoggedInPageState extends State<LoggedInPage> {
     Stream<List<Restaurant>> restaurants =
         restaurantCollectionStream.map((QuerySnapshot snapshot) {
       return snapshot.docs
-          .map((doc) => Restaurant.fromJson(doc.data() as Map<String, dynamic>))
+          .map((doc) => Restaurant.fromJson(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     });
 
@@ -128,6 +113,10 @@ class _LoggedInPageState extends State<LoggedInPage> {
           )
         ],
       ),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        Navigator.pushNamed(context, "/addRestaurantPage");
+      },
+      child: Text("new Restaurant"),),
     );
   }
 }

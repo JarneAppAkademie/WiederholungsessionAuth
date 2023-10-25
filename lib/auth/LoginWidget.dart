@@ -112,6 +112,16 @@ class _LoginWidgetState extends State<LoginWidget> {
                 Navigator.pushNamed(context, '/loggedInPage');
               }
             }),
+            ElevatedButton(
+            child: Text("Logout"),
+            onPressed: () async{
+              await FirebaseAuth.instance.signOut();
+            }),
+            ElevatedButton(
+            child: Text("go to next Page witout signin"),
+            onPressed: () {
+              Navigator.pushNamed(context, '/loggedInPage');
+            }),
       ],
     );
   }

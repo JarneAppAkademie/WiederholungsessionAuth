@@ -1,4 +1,4 @@
-import 'package:firebasetest/models/Restaurant.dart';
+import 'package:firebasetest/firebase/models/Restaurant.dart';
 import 'package:flutter/material.dart';
 
 class RestaurantTile extends StatelessWidget {
@@ -18,7 +18,7 @@ class RestaurantTile extends StatelessWidget {
         ),
         SizedBox(width: 15,),
         ElevatedButton(onPressed: (){
-          Navigator.pushNamed(context, '/rewiewPage');
+          Navigator.pushNamed(context, '/rewiewPage',arguments: restaurant.restaurantId);
         }, child: Text("show Rewiews"))
       ]),
     );

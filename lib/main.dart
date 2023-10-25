@@ -1,4 +1,6 @@
-import 'package:firebasetest/RewiewPage.dart';
+import 'package:firebasetest/firebase/pages/AddRestaurantPage.dart';
+import 'package:firebasetest/firebase/pages/AddReviewPage.dart';
+import 'package:firebasetest/firebase/pages/RewiewPage.dart';
 import 'package:flutter/material.dart';
 
 //Imports for authentication, remember that you need them in your dependencies
@@ -8,13 +10,13 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebasetest/firebase_options.dart';
 
-import 'package:firebasetest/LoggedInPage.dart';
-import 'package:firebasetest/EmailVarifikation.dart';
-import 'package:firebasetest/PasswordforgottenPage.dart';
+import 'package:firebasetest/firebase/pages/LoggedInPage.dart';
+import 'package:firebasetest/auth/EmailVarifikation.dart';
+import 'package:firebasetest/auth/PasswordforgottenPage.dart';
 
 
 
-import 'LoginWidget.dart';
+import 'auth/LoginWidget.dart';
 
 
 
@@ -41,6 +43,9 @@ class MyApp extends StatelessWidget {
         '/varifikationPage':(context) => EmailVerifikationPage(),
         '/loggedInPage' :(context) => LoggedInPage(),
         '/rewiewPage':(context) => RewiewPage(),
+        '/addRestaurantPage':(context) => AddRestaurantPage(),
+        '/addReviewPage':(context) => AddReviewPage(),
+
       },
       initialRoute: '/loggedInPage',
     );
