@@ -55,32 +55,32 @@ class RewiewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    String restaurantId = ModalRoute.of(context)!.settings.arguments as String;
+    Restaurant restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
     
     return Scaffold(
       body: Column(
         children: [
           FutureBuilder(
-          future: fetchReviewsFromFirebase(restaurantId),
+          future: fetchReviewsFromFirebase(restaurant.restaurantId),
            builder:(context, snapshot) {
             if(snapshot.hasData){
               List<Review> reviewList = snapshot.data ?? [];
               return Expanded(
                 child: ListView(
-                  children: reviewList.map((review) => ReviewTile(review: review)).toList(),
+                  children: reviewList.map((review) => ReviewTile(review: review,restaurant: restaurant,)).toList(),
                 ),
               );  
             }else{
               return CircularProgressIndicator();
             }
           },),
-          StreamBuilder(stream: fetchReviewStreamFromFirebase(restaurantId),
+          StreamBuilder(stream: fetchReviewStreamFromFirebase(restaurant.restaurantId),
            builder:(context, snapshot) {
              if(snapshot.hasData){
               List<Review> reviewList = snapshot.data ?? [];
               return Expanded(
                 child: ListView(
-                  children: reviewList.map((review) => ReviewTile(review: review)).toList(),
+                  children: reviewList.map((review) => ReviewTile(review: review, restaurant: restaurant)).toList(),
                 ),
               );  
             }else{
@@ -90,7 +90,7 @@ class RewiewPage extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(onPressed: (){
-        Navigator.pushNamed(context, '/addReviewPage',arguments: restaurantId);
+        Navigator.pushNamed(context, '/addReviewPage',arguments: restaurant);
       },
       child: Text("new review"),),
     );

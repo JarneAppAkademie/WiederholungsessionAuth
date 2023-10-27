@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Restaurant{
-  String restaurantId;
+  final String restaurantId;
   String ownerId;
   String restaurantName;
-  DateTime creationDate;
+  final Timestamp creationDate;
   
 
   Restaurant({required this.ownerId, required this.restaurantName,required this.creationDate, required this.restaurantId});
@@ -14,8 +14,8 @@ class Restaurant{
     ownerId: json["ownerId"],
     restaurantName: json["restaurantName"],
     //to parse Timestamp(Datastructure from Firebase) to Datetime
-    creationDate:  DateTime.fromMillisecondsSinceEpoch(
-       (json["creationDate"] as Timestamp).seconds *1000),
+    creationDate:
+       json["creationDate"],
        restaurantId: restaurantId
     );
 }

@@ -1,5 +1,7 @@
 import 'package:firebasetest/firebase/pages/AddRestaurantPage.dart';
 import 'package:firebasetest/firebase/pages/AddReviewPage.dart';
+import 'package:firebasetest/firebase/pages/EditRestaurantPage.dart';
+import 'package:firebasetest/firebase/pages/EditReviewPage.dart';
 import 'package:firebasetest/firebase/pages/RewiewPage.dart';
 import 'package:flutter/material.dart';
 
@@ -45,6 +47,8 @@ class MyApp extends StatelessWidget {
         '/rewiewPage':(context) => RewiewPage(),
         '/addRestaurantPage':(context) => AddRestaurantPage(),
         '/addReviewPage':(context) => AddReviewPage(),
+        '/editReviewPage':(context) => EditReviewPage(),
+        '/editRestaurantPage':(context) => EditRestaurantPage(),
 
       },
       initialRoute: '/loggedInPage',

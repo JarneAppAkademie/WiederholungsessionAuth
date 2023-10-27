@@ -13,13 +13,17 @@ class RestaurantTile extends StatelessWidget {
         Column(
           children: [
             Text(restaurant.restaurantName),
-            Text(restaurant.creationDate.toString()),
+            Text(restaurant.creationDate.toDate().toString(),
+            style: TextStyle(fontSize: 10),),
           ],
         ),
         SizedBox(width: 15,),
         ElevatedButton(onPressed: (){
-          Navigator.pushNamed(context, '/rewiewPage',arguments: restaurant.restaurantId);
-        }, child: Text("show Rewiews"))
+          Navigator.pushNamed(context, '/rewiewPage',arguments: restaurant);
+        }, child: Text("show Rewiews")),
+        ElevatedButton(onPressed: (){
+          Navigator.pushNamed(context, '/editRestaurantPage',arguments: restaurant);
+        }, child: Text("edit"))
       ]),
     );
   }

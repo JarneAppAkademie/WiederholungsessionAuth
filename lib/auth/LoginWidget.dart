@@ -104,9 +104,9 @@ class _LoginWidgetState extends State<LoginWidget> {
             }),
         ElevatedButton(
             child: Text("Google Signin"),
-            onPressed: () {
+            onPressed: () async{
               
-              signInWithGoogle();
+              await signInWithGoogle();
               if (FirebaseAuth.instance.currentUser != null) {
                 print("mit google eingelogt");
                 Navigator.pushNamed(context, '/loggedInPage');

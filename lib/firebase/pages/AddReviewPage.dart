@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebasetest/firebase/models/Restaurant.dart';
 import 'package:flutter/material.dart';
 
 class AddReviewPage extends StatelessWidget {
@@ -7,9 +8,8 @@ class AddReviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String? restaurantId = ModalRoute.of(context)!.settings.arguments as String?;
+    final Restaurant restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
 
-    print("restaurantid: $restaurantId");
     TextEditingController descriptionController = TextEditingController();
     TextEditingController scoreController = TextEditingController();
 
@@ -26,7 +26,7 @@ class AddReviewPage extends StatelessWidget {
           print(data);
 
       
-        FirebaseFirestore.instance.collection("Restaurants").doc(restaurantId)
+        FirebaseFirestore.instance.collection("Restaurants").doc(restaurant.restaurantId)
         .collection("reviews").add(
           data
         );

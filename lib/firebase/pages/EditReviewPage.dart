@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebasetest/firebase/models/Restaurant.dart';
+import 'package:firebasetest/firebase/models/Review.dart';
 import 'package:flutter/material.dart';
 
 class EditReviewPage extends StatelessWidget {
@@ -7,12 +9,22 @@ class EditReviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String? restaurantId = ModalRoute.of(context)!.settings.arguments as String?;
-    print("restaurantid: $restaurantId");
+
     TextEditingController descriptionController = TextEditingController();
     TextEditingController scoreController = TextEditingController();
 
-    addRestaurantToFirebase(){
+    List argumentList = ModalRoute.of(context)!.settings.arguments as List;
+    Review review = argumentList[0] as Review;
+    Restaurant restaurant = argumentList[1] as Restaurant;
+
+    descriptionController.text = review.description;
+    scoreController.text = review.score.toString();
+    
+
+
+    //descriptionController.text = 
+
+    addReviewToFirebase(){
       final user = FirebaseAuth.instance.currentUser;
       try {
       Map<String,dynamic> data = {
@@ -25,9 +37,8 @@ class EditReviewPage extends StatelessWidget {
           print(data);
 
       
-        FirebaseFirestore.instance.collection("Restaurants").doc(restaurantId).collection("reviews").add(
-          data
-        );
+        FirebaseFirestore.instance.collection("Restaurants").doc(restaurant.restaurantId)
+        .collection("reviews").doc(review.documentId).update(data);
 
         Navigator.pop(context);
         
@@ -52,7 +63,7 @@ class EditReviewPage extends StatelessWidget {
               ? ElevatedButton(
                   child: Text("füge review hinzu"),
                   onPressed: () {
-                    addRestaurantToFirebase();
+                    addReviewToFirebase();
                     
                   },
                 )
