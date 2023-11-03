@@ -15,6 +15,27 @@ service cloud.firestore {
                         request.resource.data.restaurantName is string &&
                         request.resource.data.restaurantName.size() >= 3 &&
                         request.resource.data.restaurantName.size() <= 50;
+      allow delete: if request.auth.uid != null && request.auth.uid == resource.data.ownerId;
+                        
+    	match /reviews/{reviewId}{
+      	allow read: if request.auth.uid != null;
+      	allow create: if request.auth.uid != null && request.resource.data.score >= 1 &&
+        								request.resource.data.score <= 5 &&
+                        request.resource.data.score is number;
+        allow update: if request.auth.uid != null && request.auth.uid == resource.data.authorId && request.resource.data.score >= 1 &&
+        								request.resource.data.score <= 5 &&
+                        request.resource.data.score is number;
+         allow delete: if request.auth.uid != null && request.auth.uid == resource.data.authorId
+         									|| get(/databases/$(database)/documents/Restaurants/$(restaurantId)).data.ownerId == request.auth.uid||
+                          get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.admin == true;
+                          
+      }
+                        
+                        
+    }
+    match /Users/{userId}{
+    	allow read: if true;
+      allow write: if true;
                         
                         
     }
