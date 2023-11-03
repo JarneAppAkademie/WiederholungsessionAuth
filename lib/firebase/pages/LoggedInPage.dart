@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebasetest/firebase/models/User.dart';
 import 'package:firebasetest/firebase/widgets/RestaurantTile.dart';
 import 'package:firebasetest/firebase/models/Restaurant.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,24 @@ class LoggedInPage extends StatefulWidget {
 }
 
 class _LoggedInPageState extends State<LoggedInPage> {
+
+  Future<UserFirebase?> fetchUserFromFirebase() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot userDocument =
+          await FirebaseFirestore.instance.collection("Users").doc(userId).get();
+      print(userDocument.data().toString());
+      
+      UserFirebase user = UserFirebase.fromJson(userDocument.data() as Map<String,dynamic>);
+
+      
+
+      return user;
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
 
 
   Future<List<Restaurant>> fetchResterauntsFromFirebase() async {
@@ -76,6 +95,22 @@ class _LoggedInPageState extends State<LoggedInPage> {
       ),
       body: Column(
         children: [
+          FutureBuilder(future: fetchUserFromFirebase(),
+           builder:(context, snapshot) {
+            if(snapshot.hasData){
+              UserFirebase user = snapshot.data!;
+              return Row(
+                children: [
+                  Container(width: 150,child: Image.network(user.userImage)),
+                  SizedBox(width: 30,),
+                  Text(user.name)
+                ],
+              );
+              
+            }else{
+              return CircularProgressIndicator();
+            }
+          },),
           FutureBuilder(
               future: fetchResterauntsFromFirebase(),
               builder: (context, snapshot) {

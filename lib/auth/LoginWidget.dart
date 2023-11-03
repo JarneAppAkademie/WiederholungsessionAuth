@@ -1,6 +1,13 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebasetest/firebase/models/User.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
@@ -10,9 +17,63 @@ class LoginWidget extends StatefulWidget {
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
-
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+
+  File? image;
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      //print(image.toString());
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      setState(() => this.image = imageTemp);
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
+  Future<String> uploadUserImageToStorage(File imageFile, String userId)async{
+    try {
+      Reference storageReference = FirebaseStorage.instance.ref().child("userProfiles/$userId/userImage");
+      TaskSnapshot uploadTask = await storageReference.putFile(imageFile);
+
+      String downloadUrl = await uploadTask.ref.getDownloadURL();
+
+      return downloadUrl;
+      
+    } catch (e) {
+      print(e.toString());
+      return "";
+    }
+  }
+
+  Future createUserDocument()async{
+    try {
+
+      String imagePath =  await uploadUserImageToStorage(image!, FirebaseAuth.instance.currentUser!.uid);
+
+      UserFirebase user = UserFirebase(
+        userId: FirebaseAuth.instance.currentUser!.uid,
+        userImage: imagePath,
+        name: nameController.text,
+        email: emailController.text
+        );
+      Map<String,dynamic> data = {
+        'userId': user.userId,
+        'userImage': user.userImage,
+        'name': user.name,
+        'email': user.email
+      };
+    //hier würde auch data gehen
+      await FirebaseFirestore.instance.collection("Users").doc(user.userId).set(user.JsonFromUser());
+      
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
 
   Future signUpWithEmail() async {
     try {
@@ -31,6 +92,12 @@ class _LoginWidgetState extends State<LoginWidget> {
     }
   }
 
+  
+
+
+  
+  
+
   Future signInWithEmail() async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -43,6 +110,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       }
     }
   }
+
   // sign in method for google sign in
   // Important!! for this to work you need to register the sha1 key in firebase
   Future<UserCredential> signInWithGoogle() async {
@@ -67,21 +135,31 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        image != null ? Container(width: 100,child: Image.file(image!)) : Text("Noch kein Bild ausgewählt"),
+        ElevatedButton(onPressed: (){
+          pickImage();
+        }, child: Text("pick image")),
+        Text("Name"),
+        TextFormField(
+          controller: nameController,
+        ),
+        Text("Email"),
         TextFormField(
           controller: emailController,
         ),
+        Text("Passwort"),
         TextFormField(
           controller: passwordController,
         ),
         ElevatedButton(
             child: Text("Signup"),
-            onPressed: () {
-              signUpWithEmail();
+            onPressed: () async{
+              await signUpWithEmail();
               // check again if user is realyy logged in, this should be allready be catched through an error in the signup function
               if (FirebaseAuth.instance.currentUser != null) {
+                await createUserDocument();
                 print("registriert");
                 Navigator.pushNamed(context, '/varifikationPage');
-                
               }
             }),
         ElevatedButton(
@@ -104,20 +182,19 @@ class _LoginWidgetState extends State<LoginWidget> {
             }),
         ElevatedButton(
             child: Text("Google Signin"),
-            onPressed: () async{
-              
+            onPressed: () async {
               await signInWithGoogle();
               if (FirebaseAuth.instance.currentUser != null) {
                 print("mit google eingelogt");
                 Navigator.pushNamed(context, '/loggedInPage');
               }
             }),
-            ElevatedButton(
+        ElevatedButton(
             child: Text("Logout"),
-            onPressed: () async{
+            onPressed: () async {
               await FirebaseAuth.instance.signOut();
             }),
-            ElevatedButton(
+        ElevatedButton(
             child: Text("go to next Page witout signin"),
             onPressed: () {
               Navigator.pushNamed(context, '/loggedInPage');
